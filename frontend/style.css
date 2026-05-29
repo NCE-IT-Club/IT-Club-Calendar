@@ -49,7 +49,7 @@ body {
     height: 40px;
     margin-right: 16px;
     border-radius: 50%;
-    overflow: hidden;
+    overflow: hidden; /* This automatically forces a circle crop! */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -60,7 +60,8 @@ body {
 .logo-placeholder img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover; /* Centers & perfectly crops any shaped image into the circle */
+    display: none; /* Hidden by default until image actually successfully loads */
 }
 
 .app-title {
