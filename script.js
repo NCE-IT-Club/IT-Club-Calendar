@@ -118,16 +118,19 @@ function renderMonth(monthIndex) {
 
     const firstDayStr = monthData.days[0].day_of_week;
     const paddingSlots = DOW_MAP[firstDayStr];
-
-    for (let i = 0; i < paddingSlots; i++) {
+    
+    // Core Logic Upgrade: Limit calendar grid to 5 exact rows (35 maximum slots) 
+    const totalSlots = 35;
+    const cellElements = new Array(totalSlots).fill(null);
+    for (let i = 0; i < totalSlots; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = "cal-cell empty";
-        grid.appendChild(emptyCell);
+        cellElements[i] = emptyCell;
     }
 
     const eventsMap = new Map();
 
-    monthData.days.forEach(day => {
+    monthData.days.forEach((day, index) => {
         const cell = document.createElement('div');
         cell.className = "cal-cell";
 
@@ -182,8 +185,16 @@ function renderMonth(monthIndex) {
         }
 
         cell.innerHTML = cellHTML;
-        grid.appendChild(cell);
+        
+        // Wrap-around trick: Push dates past the 35th slot backward to the very top!
+        const slotIdx = (paddingSlots + index) % totalSlots;
+        cellElements[slotIdx] = cell;
     });
+
+    // Render exactly 35 cells (7x5 format)
+    for (let i = 0; i < totalSlots; i++) {
+        grid.appendChild(cellElements[i]);
+    }
 
     const eventListEl = document.getElementById('eventList');
     eventListEl.innerHTML = "";
