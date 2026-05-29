@@ -141,19 +141,11 @@ function renderMonth(monthIndex) {
         `;
 
         if (day.event_name && day.event_name !== "Weekend") {
-            cellHTML += `<div class="event-chip">${day.event_name}</div>`;
+            cellHTML += `<div class="event-dots-container" title="${day.event_name}"><div class="event-dot"></div></div>`;
             eventsForList.push({ date: day.nepali_date, name: day.event_name, typeClass: `et-${finalType}` });
         } else if (isWeekend && !day.event_name) {
             // Unnamed weekend
             eventsForList.push({ date: day.nepali_date, name: "Weekend", typeClass: "et-holiday" });
-        } else if (day.event_name === "Weekend" && day.type !== "exam" && day.type !== "College Event" && day.type !== "IT Club Event") {
-           // Ignored in list unless you want weekends listed. (We'll skip plotting every weekend in the list footer to keep it clean)
-        }
-
-        // If it was an exam on a weekend, the cell is Red, but we might want the event listed
-        if (isWeekend && day.type === "exam") {
-             eventsForList.push({ date: day.nepali_date, name: day.event_name + " (Holiday)", typeClass: "et-holiday" });
-             cellHTML += `<div class="event-chip">${day.event_name}</div>`;
         }
 
         cell.innerHTML = cellHTML;

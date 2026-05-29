@@ -99,9 +99,14 @@ def main():
             event_name = ""
             
             if event_info:
-                # User config overrides default behavior
-                day_type = event_info["type"]
-                event_name = event_info["name"]
+                if is_weekend and event_info["type"] == "exam":
+                    # Exams are skipped on weekends; keep it as a regular holiday
+                    day_type = "holiday"
+                    event_name = "Weekend"
+                else:
+                    # User config overrides default behavior
+                    day_type = event_info["type"]
+                    event_name = event_info["name"]
             elif is_weekend:
                 # Fallback to weekend holiday
                 day_type = "holiday"

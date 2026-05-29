@@ -180,30 +180,33 @@ body {
     margin-bottom: auto;
 }
 
-.event-chip {
-    font-size: 11px;
-    border-radius: 4px;
-    padding: 2px 4px;
-    margin-top: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 500;
+.event-dots-container {
+    display: flex;
+    justify-content: center;
+    margin-top: auto; /* Push to bottom of cell */
+    gap: 4px;
+    padding-top: 4px;
+}
+
+.event-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
 }
 
 /* Styles for specific event types */
 .type-holiday { background-color: var(--color-holiday); }
 .type-holiday .nepali-date, .type-holiday .english-date { color: var(--color-holiday-text); }
-.type-holiday .event-chip { background-color: var(--color-holiday-text); color: white; }
+.type-holiday .event-dot { background-color: var(--color-holiday-text); }
 
 .type-exam { background-color: var(--color-exam); }
-.type-exam .event-chip { background-color: var(--color-exam-text); color: white; }
+.type-exam .event-dot { background-color: var(--color-exam-text); }
 
 .type-college { background-color: var(--color-college); }
-.type-college .event-chip { background-color: var(--color-college-text); color: white; }
+.type-college .event-dot { background-color: var(--color-college-text); }
 
 .type-it { background-color: var(--color-it); }
-.type-it .event-chip { background-color: var(--color-it-text); color: white; }
+.type-it .event-dot { background-color: var(--color-it-text); }
 
 /* Today Highlight (Orange) */
 .is-today {
@@ -262,8 +265,8 @@ body {
     }
     .nepali-date { font-size: 14px; }
     .english-date { font-size: 9px; }
-    .event-chip {
-        font-size: 9px;
-        padding: 1px 2px;
+    .event-dot {
+        width: 6px;
+        height: 6px;
     }
 }
