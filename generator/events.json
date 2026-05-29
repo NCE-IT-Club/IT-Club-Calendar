@@ -1,15 +1,26 @@
 {
   "_instruction": "Events are grouped by category (college, exam, holiday, it). Keys use 'MM-DD' for single days or 'MM-DD:DD' for a range. MM is 01 for Baisakh to 12 for Chaitra. Names are automatically capitalized!",
   "college": {
-    "02-04": "class start"
+    "02-04": "classes start",
+    "05-11": "classes end",
+    "08-01": "classes start",
+    "11-21": "classes end"
   },
   "exam": {
     "03-11:19": "1st internal assessment",
-    "05-01:09": "2nd internal assessment"
+    "05-01:10": "2nd internal assessment",
+    "09-13:21": "1st internal assessment",
+    "11-10:20": "2nd internal assessment"
   },
   "holiday": {
-    "01-01": "magheshakranti",
-    "02-15": "republic day"
+    "01-01": "new year",
+    "01-18": "international labour day",
+    "02-15": "republic day",
+    "05-12:32": "exam and semester break",
+    "06-01:32": "exam and semester break",
+    "07-01:32": "exam and semester break",
+    "11-22:32": "exam and semester break",
+    "12-01:32": "exam and semester break"
   },
   "it": {
     "02-11:12": "recruitment interviews",
