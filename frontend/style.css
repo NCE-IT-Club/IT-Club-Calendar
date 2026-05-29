@@ -26,7 +26,7 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background-color: var(--background);
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
@@ -74,7 +74,7 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-weight: 500;
     font-size: 14px;
     color: var(--text-secondary);
