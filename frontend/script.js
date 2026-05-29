@@ -103,8 +103,8 @@ function renderMonth(monthIndex) {
         grid.appendChild(emptyCell);
     }
 
-    // List of events for the footer
-    const eventsForList = [];
+    // Grouping events for the footer display
+    const eventsMap = new Map();
 
     // Render Actual Days
     monthData.days.forEach(day => {
@@ -113,22 +113,18 @@ function renderMonth(monthIndex) {
 
         const isWeekend = (day.day_of_week === "Saturday" || day.day_of_week === "Sunday");
         
-        // Priority Logic:
-        // College Event (Yellow) & IT Club (Blue) overlap EVERYTHING.
-        // Holiday (Red) overlaps Exam (Green).
-        // Exam (Green) overlaps normal days.
         let finalType = "normal";
-        
-        // Determine type based on your priority rules
-        if (day.type === "College Event") {
-            finalType = "college";
-        } else if (day.type === "IT Club Event") {
-            finalType = "it";
-        } else if (isWeekend || day.type === "holiday") {
-            // Even if generator said 'exam', if it's weekend, force holiday priority!
+        if (day.type === "College Event" || day.type === "college") finalType = "college";
+        else if (day.type === "IT Club Event" || day.type === "it") finalType = "it";
+        else if (isWeekend || day.type === "holiday") finalType = "holiday";
+        else if (day.type === "exam") finalType = "exam";
+
+        let evName = day.event_name;
+
+        // Front-end override: If it's a weekend, strictly enforce NO exam markings
+        if (isWeekend && day.type === "exam") {
+            evName = "Weekend";
             finalType = "holiday";
-        } else if (day.type === "exam") {
-            finalType = "exam";
         }
 
         if (finalType !== "normal") cell.classList.add(`type-${finalType}`);
@@ -140,12 +136,23 @@ function renderMonth(monthIndex) {
             <div class="english-date">${day.english_date.substring(0,5)}</div>
         `;
 
-        if (day.event_name && day.event_name !== "Weekend") {
-            cellHTML += `<div class="event-dots-container" title="${day.event_name}"><div class="event-dot"></div></div>`;
-            eventsForList.push({ date: day.nepali_date, name: day.event_name, typeClass: `et-${finalType}` });
-        } else if (isWeekend && !day.event_name) {
-            // Unnamed weekend
-            eventsForList.push({ date: day.nepali_date, name: "Weekend", typeClass: "et-holiday" });
+        if (evName && evName !== "Weekend") {
+            cellHTML += `<div class="event-dots-container" title="${evName}"><div class="event-dot"></div></div>`;
+            
+            // Add or extend group in the Map for the footer
+            if (!eventsMap.has(evName)) {
+                eventsMap.set(evName, {
+                    name: evName,
+                    typeClass: `et-${finalType}`,
+                    start: day.nepali_date,
+                    end: day.nepali_date
+                });
+            } else {
+                let e = eventsMap.get(evName);
+                if (day.nepali_date > e.end) {
+                    e.end = day.nepali_date;
+                }
+            }
         }
 
         cell.innerHTML = cellHTML;
@@ -156,23 +163,17 @@ function renderMonth(monthIndex) {
     const eventListEl = document.getElementById('eventList');
     eventListEl.innerHTML = "";
     
-    if (eventsForList.length === 0) {
+    if (eventsMap.size === 0) {
         eventListEl.innerHTML = "<li class='event-item'><i>No special events this month.</i></li>";
     } else {
-        // Filter out basic weekends from the detailed list so it doesn't get crowded
-        const filteredEvents = eventsForList.filter(e => e.name !== "Weekend" && e.name !== "");
-        
-        if (filteredEvents.length === 0) {
-             eventListEl.innerHTML = "<li class='event-item'><i>No special events this month.</i></li>";
-        } else {
-            filteredEvents.forEach(ev => {
-                eventListEl.innerHTML += `
-                    <li class="event-item ${ev.typeClass}">
-                        <div class="ev-date">${ev.date}</div>
-                        <div class="ev-name">${ev.name}</div>
-                    </li>
-                `;
-            });
-        }
+        eventsMap.forEach(ev => {
+            const dateDisplay = ev.start === ev.end ? ev.start : `${ev.start} - ${ev.end}`;
+            eventListEl.innerHTML += `
+                <li class="event-item ${ev.typeClass}">
+                    <div class="ev-date" style="font-weight: bold; min-width: 60px;">${dateDisplay}</div>
+                    <div class="ev-name">${ev.name}</div>
+                </li>
+            `;
+        });
     }
 }
