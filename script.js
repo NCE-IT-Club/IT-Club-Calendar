@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error("JSON not found.");
             return response.json();
         }),
-        fetch('../generator/events.json').then(response => response.json()).catch(() => ({}))
+        fetch('generator/events.json').then(response => response.json()).catch(() => ({}))
     ])
     .then(([data, eventsData]) => {
         globalCalendarData = data;
@@ -202,3 +202,4 @@ function renderMonth(monthIndex) {
         });
     }
 }
+

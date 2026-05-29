@@ -127,7 +127,7 @@ def main():
         calendar_output["months"].append(month_data)
 
     # 6. Save output JSON exactly where the Frontend needs it
-    output_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+    output_dir = os.path.join(os.path.dirname(__file__), '..')
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, 'calendar_data.json')
     
