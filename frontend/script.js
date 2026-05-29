@@ -1,4 +1,5 @@
 let globalCalendarData = null;
+let globalEventLookup = {};
 let currentMonthIndex = 0;
 let todayEnglishDateStr = "";
 
@@ -19,35 +20,60 @@ function initTodayString() {
 document.addEventListener("DOMContentLoaded", () => {
     initTodayString();
 
-    fetch('calendar_data.json')
-        .then(response => {
-            if (!response.ok) throw new Error("JSON not found. Run python generator first.");
+    Promise.all([
+        fetch('calendar_data.json').then(response => {
+            if (!response.ok) throw new Error("JSON not found.");
             return response.json();
-        })
-        .then(data => {
-            globalCalendarData = data;
-            
-            // Try to set currentMonthIndex to the month that contains today
-            let foundTodayMonth = false;
-            for (let m = 0; m < data.months.length; m++) {
-                const month = data.months[m];
-                if (month.days.some(d => d.english_date === todayEnglishDateStr)) {
-                    currentMonthIndex = m;
-                    foundTodayMonth = true;
-                    break;
+        }),
+        fetch('../generator/events.json').then(response => response.json()).catch(() => ({}))
+    ])
+    .then(([data, eventsData]) => {
+        globalCalendarData = data;
+
+        // Process dynamic events directly on the frontend
+        for (const [category, events] of Object.entries(eventsData)) {
+            if (category.startsWith("_")) continue;
+            for (const [dateKey, rawName] of Object.entries(events)) {
+                // Auto capitalize safely
+                const name = rawName ? rawName.replace(/\b\w/g, c => c.toUpperCase()) : "";
+                const parts = dateKey.split("-");
+                if (parts.length < 2) continue;
+                
+                const monthStr = parts[0];
+                const daysStr = parts[1];
+                
+                if (daysStr.includes(":")) {
+                    const [start, end] = daysStr.split(":");
+                    for (let d = parseInt(start); d <= parseInt(end); d++) {
+                        const formattedDay = String(d).padStart(2, '0');
+                        globalEventLookup[`${monthStr}-${formattedDay}`] = { name, type: category };
+                    }
+                } else {
+                    const formattedDay = String(parseInt(daysStr)).padStart(2, '0');
+                    globalEventLookup[`${monthStr}-${formattedDay}`] = { name, type: category };
                 }
             }
-            
-            // If today isn't in this calendar, just start at month 0 (Baisakh)
-            if (!foundTodayMonth) currentMonthIndex = 0;
-            
-            renderMonth(currentMonthIndex);
-        })
-        .catch(error => {
-            document.getElementById('monthTitle').innerText = "Error: Data not generated";
-            console.error("Calendar Load Error:", error);
-            document.getElementById('calendarGrid').innerHTML = `<div style="padding: 20px; grid-column: span 7;">Please generate the calendar data first by running the Python generator.</div>`;
-        });
+        }
+        
+        let foundTodayMonth = false;
+        for (let m = 0; m < data.months.length; m++) {
+            const month = data.months[m];
+            if (month.days.some(d => d.english_date === todayEnglishDateStr)) {
+                currentMonthIndex = m;
+                foundTodayMonth = true;
+                break;
+            }
+        }
+        
+        if (!foundTodayMonth) currentMonthIndex = 0;
+        
+        renderMonth(currentMonthIndex);
+    })
+    .catch(error => {
+        document.getElementById('monthTitle').innerText = "Error";
+        console.error("Calendar Load Error:", error);
+        document.getElementById('calendarGrid').innerHTML = `<div style="padding: 20px; grid-column: span 7; color: red;">Error: ${error.message} - Please generate calendar_data.json first.</div>`;
+    });
 
     document.getElementById('prevBtn').addEventListener('click', () => {
         if (currentMonthIndex > 0) {
@@ -65,7 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById('todayBtn').addEventListener('click', () => {
         if (!globalCalendarData) return;
-        
         let foundTodayMonth = false;
         for (let m = 0; m < globalCalendarData.months.length; m++) {
             if (globalCalendarData.months[m].days.some(d => d.english_date === todayEnglishDateStr)) {
@@ -74,7 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
             }
         }
-        
         if (foundTodayMonth) {
             renderMonth(currentMonthIndex);
         } else {
@@ -89,11 +113,9 @@ function renderMonth(monthIndex) {
     const monthData = globalCalendarData.months[monthIndex];
     document.getElementById('monthTitle').innerText = `${monthData.name} ${globalCalendarData.year}`;
     
-    // Manage Grid
     const grid = document.getElementById('calendarGrid');
     grid.innerHTML = "";
 
-    // Calculate empty padding slots
     const firstDayStr = monthData.days[0].day_of_week;
     const paddingSlots = DOW_MAP[firstDayStr];
 
@@ -103,34 +125,39 @@ function renderMonth(monthIndex) {
         grid.appendChild(emptyCell);
     }
 
-    // Grouping events for the footer display
     const eventsMap = new Map();
 
-    // Render Actual Days
     monthData.days.forEach(day => {
         const cell = document.createElement('div');
         cell.className = "cal-cell";
 
         const isWeekend = (day.day_of_week === "Saturday" || day.day_of_week === "Sunday");
         
+        const monthNumStr = String(monthIndex + 1).padStart(2, '0');
+        const dayNumStr = String(day.nepali_date).padStart(2, '0');
+        const lookupKey = `${monthNumStr}-${dayNumStr}`;
+        const customEvent = globalEventLookup[lookupKey];
+
         let finalType = "normal";
-        if (day.type === "College Event" || day.type === "college") finalType = "college";
-        else if (day.type === "IT Club Event" || day.type === "it") finalType = "it";
-        else if (isWeekend || day.type === "holiday") finalType = "holiday";
-        else if (day.type === "exam") finalType = "exam";
+        let evName = "";
 
-        let evName = day.event_name;
-
-        // Front-end override: If it's a weekend, strictly enforce NO exam markings
-        if (isWeekend && day.type === "exam") {
-            evName = "Weekend";
+        // FRONTEND REAL-TIME LOGIC takes complete priority!
+        if (customEvent) {
+            if (isWeekend && customEvent.type === "exam") {
+                finalType = "holiday";
+                evName = "Weekend";
+            } else {
+                finalType = customEvent.type;
+                evName = customEvent.name;
+            }
+        } else if (isWeekend) {
             finalType = "holiday";
+            evName = "Weekend";
         }
 
         if (finalType !== "normal") cell.classList.add(`type-${finalType}`);
         if (day.english_date === todayEnglishDateStr) cell.classList.add("is-today");
 
-        // Build Inner HTML
         let cellHTML = `
             <div class="nepali-date">${day.nepali_date}</div>
             <div class="english-date">${day.english_date.substring(0,5)}</div>
@@ -139,7 +166,6 @@ function renderMonth(monthIndex) {
         if (evName && evName !== "Weekend") {
             cellHTML += `<div class="event-dots-container" title="${evName}"><div class="event-dot"></div></div>`;
             
-            // Add or extend group in the Map for the footer
             if (!eventsMap.has(evName)) {
                 eventsMap.set(evName, {
                     name: evName,
@@ -159,7 +185,6 @@ function renderMonth(monthIndex) {
         grid.appendChild(cell);
     });
 
-    // Populate the bottom Event List
     const eventListEl = document.getElementById('eventList');
     eventListEl.innerHTML = "";
     
