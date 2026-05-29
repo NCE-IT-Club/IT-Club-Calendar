@@ -1,7 +1,7 @@
 {
   "_instruction": "Events are grouped by category (college, exam, holiday, it). Keys use 'MM-DD' for single days or 'MM-DD:DD' for a range. MM is 01 for Baisakh to 12 for Chaitra. Names are automatically capitalized!",
   "college": {
-    "02-02": "class start"
+    "02-04": "class start"
   },
   "exam": {
     "03-11:19": "1st internal assessment",
