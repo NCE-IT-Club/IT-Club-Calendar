@@ -23,6 +23,8 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    user-select: none; /* Prevents text from being highlighted/copied when clicked */
+    -webkit-user-select: none; /* For Safari compatibility */
 }
 
 body {
