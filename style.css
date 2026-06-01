@@ -1,4 +1,11 @@
 :root {
+    /* ==== CUSTOMIZATION PANEL ==== */
+    /* Edit these numbers and save this file to see live changes! */
+    --nepali-date-size: 32px;  /* Change font size (like 40px, 20px) */
+    --english-date-x: 8px;     /* Move english date horizontal (push from right) */
+    --english-date-y: 6px;     /* Move english date vertical (push from bottom) */
+    /* ============================= */
+
     /* Google Material UI Colors */
     --primary: #1A73E8; /* Google Blue */
     --surface: #FFFFFF;
@@ -183,7 +190,7 @@ body {
 }
 
 .nepali-date {
-    font-size: 32px; /* Emphasized date number */
+    font-size: var(--nepali-date-size); /* Uses Customization Panel property */
     font-weight: 700;
     margin: 0;
     line-height: 1; /* Keep it tight */
@@ -191,8 +198,8 @@ body {
 
 .english-date {
     position: absolute;
-    bottom: 6px;
-    right: 8px;
+    bottom: var(--english-date-y);  /* Uses Customization Panel property */
+    right: var(--english-date-x);   /* Uses Customization Panel property */
     font-size: 11px;
     color: var(--text-secondary);
     margin: 0;
