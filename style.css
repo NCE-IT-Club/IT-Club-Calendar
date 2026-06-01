@@ -181,9 +181,9 @@ body {
 }
 
 .nepali-date {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 4px;
+    font-size: 22px; /* Bigger date number */
+    font-weight: 600;
+    margin-bottom: 2px;
 }
 
 .english-date {
@@ -194,10 +194,10 @@ body {
 
 .event-dots-container {
     display: flex;
-    justify-content: center;
-    margin-top: auto; /* Push to bottom of cell */
+    position: absolute;
+    top: 8px;
+    right: 8px;
     gap: 4px;
-    padding-top: 4px;
 }
 
 .event-dot {
