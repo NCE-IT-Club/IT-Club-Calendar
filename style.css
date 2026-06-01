@@ -168,6 +168,8 @@ body {
     background-color: var(--surface);
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     transition: filter 0.15s ease-in-out, transform 0.1s;
 }
 
@@ -181,15 +183,19 @@ body {
 }
 
 .nepali-date {
-    font-size: 22px; /* Bigger date number */
-    font-weight: 600;
-    margin-bottom: 2px;
+    font-size: 32px; /* Emphasized date number */
+    font-weight: 700;
+    margin: 0;
+    line-height: 1; /* Keep it tight */
 }
 
 .english-date {
-    font-size: 10px;
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    font-size: 11px;
     color: var(--text-secondary);
-    margin-bottom: auto;
+    margin: 0;
 }
 
 .event-dots-container {
