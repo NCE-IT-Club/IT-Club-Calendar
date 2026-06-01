@@ -91,7 +91,7 @@ body {
 
 /* Container & Cards */
 .container {
-    max-width: 900px;
+    max-width: 750px; /* Reduced from 900px to make PC proportions look much more balanced! */
     margin: 24px auto;
     padding: 0 16px;
     display: flex;
@@ -154,17 +154,26 @@ body {
     gap: 0;
     border-top: 1px solid var(--divider);
     border-left: 1px solid var(--divider);
+    border-radius: 8px;
+    overflow: hidden; /* Clips the inner cell corners perfectly round */
+    box-shadow: 0 0 0 1px var(--divider); /* Ensures consistent outer border thickness */
 }
 
 .cal-cell {
     border-right: 1px solid var(--divider);
     border-bottom: 1px solid var(--divider);
-    min-height: 80px;
+    min-height: 85px; /* Slight height boost for PC to balance the new slim width */
     padding: 8px;
     position: relative;
     background-color: var(--surface);
     display: flex;
     flex-direction: column;
+    transition: filter 0.15s ease-in-out, transform 0.1s;
+}
+
+.cal-cell:hover:not(.empty) {
+    filter: brightness(0.96); /* Elegant unified modern hover effect */
+    cursor: default;
 }
 
 .cal-cell.empty {
