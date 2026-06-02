@@ -122,15 +122,14 @@ function renderMonth(monthIndex) {
     // Core Logic Upgrade: Limit calendar grid to 5 exact rows (35 maximum slots) 
     const totalSlots = 35;
     const cellElements = new Array(totalSlots).fill(null);
-    for (let i = 0; i < totalSlots; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = "cal-cell empty";
-        cellElements[i] = emptyCell;
-    }
+    const occupied = new Array(totalSlots).fill(false);
 
     const eventsMap = new Map();
 
     monthData.days.forEach((day, index) => {
+        const slotIdx = (paddingSlots + index) % totalSlots;
+        occupied[slotIdx] = true;
+        
         const cell = document.createElement('div');
         cell.className = "cal-cell";
 
@@ -187,12 +186,80 @@ function renderMonth(monthIndex) {
         cell.innerHTML = cellHTML;
         
         // Wrap-around trick: Push dates past the 35th slot backward to the very top!
-        const slotIdx = (paddingSlots + index) % totalSlots;
         cellElements[slotIdx] = cell;
     });
 
+    // 2. Previous Month (Fill empty gaps at top)
+    const prevMonthData = monthIndex > 0 ? globalCalendarData.months[monthIndex - 1] : null;
+    for (let idx = paddingSlots - 1; idx >= 0; idx--) {
+        if (!occupied[idx] && prevMonthData) {
+            const daysBack = paddingSlots - idx;
+            const prevDayIndex = prevMonthData.days.length - daysBack;
+            if (prevDayIndex >= 0) {
+                const day = prevMonthData.days[prevDayIndex];
+                const cell = document.createElement('div');
+                cell.className = "cal-cell faint type-prev-month";
+                cell.innerHTML = `
+                    <div class="nepali-date">${day.nepali_date}</div>
+                    <div class="english-date">${day.english_date.substring(0,5)}</div>
+                `;
+                cell.addEventListener('click', () => document.getElementById('prevBtn').click());
+                cellElements[idx] = cell;
+                occupied[idx] = true;
+            }
+        }
+    }
+
+    // 3. Next Month (Fill empty gaps at bottom)
+    const nextMonthData = monthIndex < globalCalendarData.months.length - 1 ? globalCalendarData.months[monthIndex + 1] : null;
+    let logicalEnd = paddingSlots + monthData.days.length;
+    let nextIdxCount = 0;
+    
+    // Fill empty slots cleanly without accidentally wrapping back to the top of the calendar grid
+    if (logicalEnd <= totalSlots) {
+        // Normal case: Fill remaining slots at the bottom
+        for (let idx = logicalEnd; idx < totalSlots; idx++) {
+            if (!occupied[idx] && nextMonthData && nextIdxCount < nextMonthData.days.length) {
+                const day = nextMonthData.days[nextIdxCount];
+                const cell = document.createElement('div');
+                cell.className = "cal-cell faint type-next-month";
+                cell.innerHTML = `
+                    <div class="nepali-date">${day.nepali_date}</div>
+                    <div class="english-date">${day.english_date.substring(0,5)}</div>
+                `;
+                cell.addEventListener('click', () => document.getElementById('nextBtn').click());
+                cellElements[idx] = cell;
+                occupied[idx] = true;
+                nextIdxCount++;
+            }
+        }
+    } else {
+        // Wrapped case: Fill remaining free slots between wrapped end and the 1st of the month
+        let wrapEnd = logicalEnd % totalSlots;
+        for (let idx = wrapEnd; idx < paddingSlots; idx++) {
+            if (!occupied[idx] && nextMonthData && nextIdxCount < nextMonthData.days.length) {
+                const day = nextMonthData.days[nextIdxCount];
+                const cell = document.createElement('div');
+                cell.className = "cal-cell faint type-next-month";
+                cell.innerHTML = `
+                    <div class="nepali-date">${day.nepali_date}</div>
+                    <div class="english-date">${day.english_date.substring(0,5)}</div>
+                `;
+                cell.addEventListener('click', () => document.getElementById('nextBtn').click());
+                cellElements[idx] = cell;
+                occupied[idx] = true;
+                nextIdxCount++;
+            }
+        }
+    }
+
     // Render exactly 35 cells (7x5 format)
     for (let i = 0; i < totalSlots; i++) {
+        if (!cellElements[i]) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = "cal-cell empty";
+            cellElements[i] = emptyCell;
+        }
         grid.appendChild(cellElements[i]);
     }
 

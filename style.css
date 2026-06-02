@@ -189,6 +189,16 @@ body {
     background-color: var(--background);
 }
 
+.cal-cell.faint {
+    background-color: var(--background);
+    opacity: 0.4;
+    cursor: pointer !important; /* Make sure pointer overrides */
+}
+
+.cal-cell.faint:hover {
+    opacity: 0.6;
+}
+
 .nepali-date {
     font-size: var(--nepali-date-size); /* Uses Customization Panel property */
     font-weight: 700;
