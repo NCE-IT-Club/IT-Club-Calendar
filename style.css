@@ -312,6 +312,7 @@ body {
     display: flex;
     align-items: center;
     padding: 12px;
+    border-radius: 8px;
     border-left: 4px solid transparent;
     background-color: var(--background);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
@@ -328,26 +329,73 @@ body {
 
 /* Event Type Borders */
 .event-item.et-holiday {
-    border-left: 4px solid #D93025;
+    border-left: 4px solid transparent;
+}
+
+.event-item.et-holiday::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #D93025, #FF5252, #D93025);
+    background-size: 100% 200%;
+    animation: shimmer 2s linear infinite;
 }
 
 .event-item.et-exam {
-    border-left: 4px solid #1E8E3E;
+    border-left: 4px solid transparent;
+}
+
+.event-item.et-exam::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #1E8E3E, #66BB6A, #1E8E3E);
+    background-size: 100% 200%;
+    animation: shimmer 2s linear infinite;
 }
 
 .event-item.et-college {
-    border-left: 4px solid #F9AB00;
+    border-left: 4px solid transparent;
+}
+
+.event-item.et-college::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #F9AB00, #FFD54F, #F9AB00);
+    background-size: 100% 200%;
+    animation: shimmer 2s linear infinite;
 }
 
 .event-item.et-it {
-    border-left: 4px solid #1967D2;
+    border-left: 4px solid transparent;
+}
+
+.event-item.et-it::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #1967D2, #42A5F5, #1967D2);
+    background-size: 100% 200%;
+    animation: shimmer 2s linear infinite;
 }
 
 .event-item.et-birthday {
     border-left: 4px solid transparent;
 }
 
-/* Birthday with shimmer effect */
 .event-item.et-birthday::before {
     content: "";
     position: absolute;
