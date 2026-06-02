@@ -4,6 +4,7 @@
     --nepali-date-size: 32px;  /* Change font size (like 40px, 20px) */
     --english-date-x: 8px;     /* Move english date horizontal (push from right) */
     --english-date-y: 6px;     /* Move english date vertical (push from bottom) */
+    --birthday-icon-size: 10px; /* Change 🎉 icon size (like 14px, 8px) */
     /* ============================= */
 
     /* Google Material UI Colors */
@@ -229,6 +230,16 @@ body {
     border-radius: 50%;
 }
 
+/* Birthday Icon (top-left corner) */
+.birthday-icon {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: var(--birthday-icon-size);
+    line-height: 1;
+    opacity: 0.85;
+}
+
 /* Styles for specific event types */
 .type-holiday { background-color: var(--color-holiday); }
 .type-holiday .nepali-date, .type-holiday .english-date { color: var(--color-holiday-text); }
@@ -283,6 +294,7 @@ body {
 .event-item.et-exam { border-left-color: var(--color-exam-text); }
 .event-item.et-college { border-left-color: var(--color-college-text); }
 .event-item.et-it { border-left-color: var(--color-it-text); }
+.event-item.et-birthday { border-left-color: #E91E63; }
 
 .ev-date {
     font-weight: bold;

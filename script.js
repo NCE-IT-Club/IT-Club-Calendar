@@ -166,12 +166,18 @@ function renderMonth(monthIndex) {
         `;
 
         if (evName && evName !== "Weekend") {
-            cellHTML += `<div class="event-dots-container" title="${evName}"><div class="event-dot"></div></div>`;
+            // Birthday: show 🎉 icon on top-left, no dot, no color
+            if (finalType === "birthday") {
+                cellHTML += `<div class="birthday-icon" title="🎂 ${evName}">🎉</div>`;
+            } else {
+                cellHTML += `<div class="event-dots-container" title="${evName}"><div class="event-dot"></div></div>`;
+            }
             
             if (!eventsMap.has(evName)) {
                 eventsMap.set(evName, {
                     name: evName,
                     typeClass: `et-${finalType}`,
+                    type: finalType,
                     start: day.nepali_date,
                     end: day.nepali_date
                 });
@@ -271,10 +277,11 @@ function renderMonth(monthIndex) {
     } else {
         eventsMap.forEach(ev => {
             const dateDisplay = ev.start === ev.end ? ev.start : `${ev.start} - ${ev.end}`;
+            const displayName = ev.type === "birthday" ? `🎂 ${ev.name}` : ev.name;
             eventListEl.innerHTML += `
                 <li class="event-item ${ev.typeClass}">
                     <div class="ev-date" style="font-weight: bold; min-width: 60px;">${dateDisplay}</div>
-                    <div class="ev-name">${ev.name}</div>
+                    <div class="ev-name">${displayName}</div>
                 </li>
             `;
         });
