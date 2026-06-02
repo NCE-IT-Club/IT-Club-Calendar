@@ -42,7 +42,8 @@ def main():
         "holiday": "holiday",
         "exam": "exam",
         "college": "College Event",
-        "it": "IT Club Event"
+        "it": "IT Club Event",
+        "birthday": "birthday"
     }
 
     # 4. Map events for quick lookup
@@ -61,16 +62,24 @@ def main():
             # Parse 'MM-DD' or 'MM-start:end'
             try:
                 month_str, days_str = date_key.split('-')
-                month_idx = int(month_str) - 1
-                month_name = NEPALI_MONTHS[month_idx]
-                
-                if ':' in days_str:
-                    start_d, end_d = map(int, days_str.split(':'))
-                    for d in range(start_d, end_d + 1):
-                        event_dict[month_name][d] = {"name": formatted_name, "type": event_type}
+
+                if category == "birthday":
+                    # Birthday format is DD-MM, so flip the parts for month lookup.
+                    day_num = int(month_str)
+                    month_idx = int(days_str) - 1
+                    month_name = NEPALI_MONTHS[month_idx]
+                    event_dict[month_name][day_num] = {"name": formatted_name, "type": event_type}
                 else:
-                    d = int(days_str)
-                    event_dict[month_name][d] = {"name": formatted_name, "type": event_type}
+                    month_idx = int(month_str) - 1
+                    month_name = NEPALI_MONTHS[month_idx]
+
+                    if ':' in days_str:
+                        start_d, end_d = map(int, days_str.split(':'))
+                        for d in range(start_d, end_d + 1):
+                            event_dict[month_name][d] = {"name": formatted_name, "type": event_type}
+                    else:
+                        d = int(days_str)
+                        event_dict[month_name][d] = {"name": formatted_name, "type": event_type}
             except Exception as e:
                 print(f"Warning: Could not parse event date key '{date_key}'. Skipping.")
 
