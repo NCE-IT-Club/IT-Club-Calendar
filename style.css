@@ -312,12 +312,12 @@ body {
     display: flex;
     align-items: center;
     padding: 12px;
-    border-radius: 6px;
-    border-left: 4px solid var(--divider);
+    border-left: 4px solid transparent;
     background-color: var(--background);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     animation: slideIn 0.3s ease-out backwards;
     position: relative;
+    overflow: hidden;
 }
 
 .event-item:hover {
@@ -326,13 +326,28 @@ body {
     background-color: rgba(25, 103, 210, 0.03);
 }
 
-.event-item.et-birthday {
-    border-left: 4px solid transparent !important;
-    background-color: var(--background);
-    position: relative;
-    overflow: hidden;
+/* Event Type Borders */
+.event-item.et-holiday {
+    border-left: 4px solid #D93025;
 }
 
+.event-item.et-exam {
+    border-left: 4px solid #1E8E3E;
+}
+
+.event-item.et-college {
+    border-left: 4px solid #F9AB00;
+}
+
+.event-item.et-it {
+    border-left: 4px solid #1967D2;
+}
+
+.event-item.et-birthday {
+    border-left: 4px solid transparent;
+}
+
+/* Birthday with shimmer effect */
 .event-item.et-birthday::before {
     content: "";
     position: absolute;
@@ -360,12 +375,6 @@ body {
         transform: translateY(0);
     }
 }
-
-.event-item.et-holiday { border-left-color: var(--color-holiday-text); }
-.event-item.et-exam { border-left-color: var(--color-exam-text); }
-.event-item.et-college { border-left-color: var(--color-college-text); }
-.event-item.et-it { border-left-color: var(--color-it-text); }
-.event-item.et-birthday { border-left-color: #E91E63; }
 
 .ev-date {
     font-weight: bold;
