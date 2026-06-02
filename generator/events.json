@@ -1,5 +1,5 @@
 {
-  "_instruction": "Events are grouped by category (college, exam, holiday, it, birthday). Keys for regular events use 'MM-DD' for single days or 'MM-DD:DD' for a range. MM is 01 for Baisakh to 12 for Chaitra. For birthdays, use 'DD-MM' format (e.g., '25-12' for Dec 25). Names are automatically capitalized!",
+  "_instruction": "Events are grouped by category (college, exam, holiday, it). Keys use 'MM-DD' for single days or 'MM-DD:DD' for a range. MM is 01 for Baisakh to 12 for Chaitra. Names are automatically capitalized!",
   "college": {
     "02-04": "classes start",
     "05-11": "classes end",
@@ -16,26 +16,16 @@
     "01-01": "new year",
     "01-18": "international labour day",
     "02-15": "republic day",
-    "05-12:31": "exam and semester break",
-    "06-01:31": "exam and semester break",
-    "07-01:30": "exam and semester break",
+    "05-12:32": "exam and semester break",
+    "06-01:32": "exam and semester break",
+    "07-01:32": "exam and semester break",
     "10-1": "maghesankranti",
-    "11-22:30": "exam and semester break",
-    "12-01:30": "exam and semester break"
+    "11-22:32": "exam and semester break",
+    "12-01:32": "exam and semester break"
   },
   "it": {
     "02-11:12": "recruitment interviews",
     "02-18:22": "python workshop",
     "02-25": "welcome & farewell"
-  },
-  "birthday": {
-    "16-09": "shlok pandey",
-    "05-09": "subigya ghimire",
-    "10-12": "dipsana adhikari",
-    "05-12": "sarwagya acharya",
-    "14-12": "nikesh jung shrestha",
-    "15-05": "pradip dhakal",
-    "21-02": "kshitiz gyawali",
-    "29-02": "chewan acharya"
   }
-}
+}       

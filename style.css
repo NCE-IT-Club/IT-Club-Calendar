@@ -4,7 +4,6 @@
     --nepali-date-size: 32px;  /* Change font size (like 40px, 20px) */
     --english-date-x: 8px;     /* Move english date horizontal (push from right) */
     --english-date-y: 6px;     /* Move english date vertical (push from bottom) */
-    --birthday-emoji-size: 16px; /* Size of birthday emoji (like 20px, 14px) */
     /* ============================= */
 
     /* Google Material UI Colors */
@@ -200,14 +199,6 @@ body {
     opacity: 0.6;
 }
 
-.birthday-emoji-container {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    font-size: var(--birthday-emoji-size);
-    line-height: 1;
-}
-
 .nepali-date {
     font-size: var(--nepali-date-size); /* Uses Customization Panel property */
     font-weight: 700;
@@ -252,10 +243,6 @@ body {
 .type-it { background-color: var(--color-it); }
 .type-it .event-dot { background-color: var(--color-it-text); }
 
-.type-birthday {
-    /* Birthday cells don't have a background color, just the emoji icon */
-}
-
 /* Today Highlight (Orange) */
 .is-today {
     box-shadow: inset 0 0 0 2px var(--color-today);
@@ -296,7 +283,6 @@ body {
 .event-item.et-exam { border-left-color: var(--color-exam-text); }
 .event-item.et-college { border-left-color: var(--color-college-text); }
 .event-item.et-it { border-left-color: var(--color-it-text); }
-.event-item.et-birthday { border-left-color: #FFB700; } /* Gold/celebratory color for birthdays */
 
 .ev-date {
     font-weight: bold;

@@ -39,25 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const parts = dateKey.split("-");
                 if (parts.length < 2) continue;
                 
-                if (category === "birthday") {
-                    // Birthday format: DD-MM (e.g., "25-12" for Dec 25)
-                    // Store as-is for DD-MM lookup
-                    globalEventLookup[dateKey] = { name, type: category };
-                } else {
-                    // Regular events format: MM-DD (e.g., "02-04" for April 2)
-                    const monthStr = parts[0];
-                    const daysStr = parts[1];
-                    
-                    if (daysStr.includes(":")) {
-                        const [start, end] = daysStr.split(":");
-                        for (let d = parseInt(start); d <= parseInt(end); d++) {
-                            const formattedDay = String(d).padStart(2, '0');
-                            globalEventLookup[`${monthStr}-${formattedDay}`] = { name, type: category };
-                        }
-                    } else {
-                        const formattedDay = String(parseInt(daysStr)).padStart(2, '0');
+                const monthStr = parts[0];
+                const daysStr = parts[1];
+                
+                if (daysStr.includes(":")) {
+                    const [start, end] = daysStr.split(":");
+                    for (let d = parseInt(start); d <= parseInt(end); d++) {
+                        const formattedDay = String(d).padStart(2, '0');
                         globalEventLookup[`${monthStr}-${formattedDay}`] = { name, type: category };
                     }
+                } else {
+                    const formattedDay = String(parseInt(daysStr)).padStart(2, '0');
+                    globalEventLookup[`${monthStr}-${formattedDay}`] = { name, type: category };
                 }
             }
         }
@@ -147,10 +140,6 @@ function renderMonth(monthIndex) {
         const lookupKey = `${monthNumStr}-${dayNumStr}`;
         const customEvent = globalEventLookup[lookupKey];
 
-        // Birthday lookup uses DD-MM format
-        const birthdayKey = `${dayNumStr}-${monthNumStr}`;
-        const birthdayEvent = globalEventLookup[birthdayKey];
-
         let finalType = "normal";
         let evName = "";
 
@@ -175,25 +164,6 @@ function renderMonth(monthIndex) {
             <div class="nepali-date">${day.nepali_date}</div>
             <div class="english-date">${day.english_date.substring(0,5)}</div>
         `;
-
-        // Birthday emoji (top-left)
-        if (birthdayEvent && birthdayEvent.type === "birthday") {
-            cellHTML += `<div class="birthday-emoji-container" title="${birthdayEvent.name}">🎉</div>`;
-            
-            if (!eventsMap.has(birthdayEvent.name)) {
-                eventsMap.set(birthdayEvent.name, {
-                    name: birthdayEvent.name,
-                    typeClass: `et-birthday`,
-                    start: day.nepali_date,
-                    end: day.nepali_date
-                });
-            } else {
-                let e = eventsMap.get(birthdayEvent.name);
-                if (day.nepali_date > e.end) {
-                    e.end = day.nepali_date;
-                }
-            }
-        }
 
         if (evName && evName !== "Weekend") {
             cellHTML += `<div class="event-dots-container" title="${evName}"><div class="event-dot"></div></div>`;
