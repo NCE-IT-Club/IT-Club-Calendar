@@ -309,14 +309,30 @@ function renderMonth(monthIndex) {
     }
 
     const eventListEl = document.getElementById('eventList');
+    const eventsTitleEl = document.querySelector('.events-title');
     eventListEl.innerHTML = "";
+    
+    // Check if there are any birthdays this month
+    let hasBirthdays = false;
+    eventsMap.forEach(ev => {
+        if (ev.type === "birthday") {
+            hasBirthdays = true;
+        }
+    });
+    
+    // Apply special styling if birthdays exist
+    if (hasBirthdays && eventsTitleEl) {
+        eventsTitleEl.classList.add("has-birthdays");
+    } else if (eventsTitleEl) {
+        eventsTitleEl.classList.remove("has-birthdays");
+    }
     
     if (eventsMap.size === 0) {
         eventListEl.innerHTML = "<li class='event-item'><i>No special events this month.</i></li>";
     } else {
         eventsMap.forEach(ev => {
             const dateDisplay = ev.start === ev.end ? ev.start : `${ev.start} - ${ev.end}`;
-            const displayName = ev.type === "birthday" ? `🎂 ${ev.name}` : ev.name;
+            const displayName = ev.name;
             eventListEl.innerHTML += `
                 <li class="event-item ${ev.typeClass}">
                     <div class="ev-date" style="font-weight: bold; min-width: 60px;">${dateDisplay}</div>
