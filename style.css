@@ -274,19 +274,14 @@ body {
     margin-bottom: 16px;
 }
 
-.events-title.has-birthdays {
-    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
-    color: #c2185b;
+.events-title.styled {
+    background: linear-gradient(135deg, #E8F0FE 0%, #D2E3FC 100%);
+    color: #1967D2;
     padding: 12px 16px;
     border-radius: 8px;
     font-weight: 500;
-    box-shadow: 0 2px 4px rgba(233, 30, 99, 0.1);
-}
-
-.events-title.has-birthdays::before {
-    content: "🎉";
-    margin-right: 4px;
-    font-size: 20px;
+    box-shadow: 0 2px 4px rgba(25, 103, 210, 0.1);
+    transition: all 0.3s ease;
 }
 
 .event-list {
@@ -303,6 +298,30 @@ body {
     border-radius: 6px;
     border-left: 4px solid var(--divider);
     background-color: var(--background);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    animation: slideIn 0.3s ease-out backwards;
+}
+
+.event-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.event-item.et-birthday {
+    background: linear-gradient(135deg, #fce4ec 0%, #fff0f5 100%);
+    border-left: 4px solid #E91E63;
+    font-style: italic;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .event-item.et-holiday { border-left-color: var(--color-holiday-text); }
