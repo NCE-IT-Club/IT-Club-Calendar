@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         globalCalendarData = data;
 
         // Process dynamic events directly on the frontend
+        // Store ALL events per day as an array so birthday + other events can coexist
         for (const [category, events] of Object.entries(eventsData)) {
             if (category.startsWith("_")) continue;
             for (const [dateKey, rawName] of Object.entries(events)) {
@@ -46,11 +47,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     const [start, end] = daysStr.split(":");
                     for (let d = parseInt(start); d <= parseInt(end); d++) {
                         const formattedDay = String(d).padStart(2, '0');
-                        globalEventLookup[`${monthStr}-${formattedDay}`] = { name, type: category };
+                        const key = `${monthStr}-${formattedDay}`;
+                        if (!globalEventLookup[key]) globalEventLookup[key] = [];
+                        globalEventLookup[key].push({ name, type: category });
                     }
                 } else {
                     const formattedDay = String(parseInt(daysStr)).padStart(2, '0');
-                    globalEventLookup[`${monthStr}-${formattedDay}`] = { name, type: category };
+                    const key = `${monthStr}-${formattedDay}`;
+                    if (!globalEventLookup[key]) globalEventLookup[key] = [];
+                    globalEventLookup[key].push({ name, type: category });
                 }
             }
         }
@@ -138,19 +143,31 @@ function renderMonth(monthIndex) {
         const monthNumStr = String(monthIndex + 1).padStart(2, '0');
         const dayNumStr = String(day.nepali_date).padStart(2, '0');
         const lookupKey = `${monthNumStr}-${dayNumStr}`;
-        const customEvent = globalEventLookup[lookupKey];
+        const dayEvents = globalEventLookup[lookupKey] || [];
 
         let finalType = "normal";
         let evName = "";
+        let isBirthday = false;
+        let birthdayName = "";
+
+        // Separate birthday from other events
+        const nonBirthdayEvents = dayEvents.filter(e => e.type !== "birthday");
+        const birthdayEvents = dayEvents.filter(e => e.type === "birthday");
+        if (birthdayEvents.length > 0) {
+            isBirthday = true;
+            birthdayName = birthdayEvents.map(e => e.name).join(", ");
+        }
+
+        const primaryEvent = nonBirthdayEvents.length > 0 ? nonBirthdayEvents[0] : null;
 
         // FRONTEND REAL-TIME LOGIC takes complete priority!
-        if (customEvent) {
-            if (isWeekend && customEvent.type === "exam") {
+        if (primaryEvent) {
+            if (isWeekend && primaryEvent.type === "exam") {
                 finalType = "holiday";
                 evName = "Weekend";
             } else {
-                finalType = customEvent.type;
-                evName = customEvent.name;
+                finalType = primaryEvent.type;
+                evName = primaryEvent.name;
             }
         } else if (isWeekend) {
             finalType = "holiday";
@@ -165,13 +182,14 @@ function renderMonth(monthIndex) {
             <div class="english-date">${day.english_date.substring(0,5)}</div>
         `;
 
+        // Birthday icon always shows independently (top-left)
+        if (isBirthday) {
+            cellHTML += `<div class="birthday-icon" title="🎂 ${birthdayName}">🎉</div>`;
+        }
+
+        // Colored dot for the primary non-birthday event (top-right)
         if (evName && evName !== "Weekend") {
-            // Birthday: show 🎉 icon on top-left, no dot, no color
-            if (finalType === "birthday") {
-                cellHTML += `<div class="birthday-icon" title="🎂 ${evName}">🎉</div>`;
-            } else {
-                cellHTML += `<div class="event-dots-container" title="${evName}"><div class="event-dot"></div></div>`;
-            }
+            cellHTML += `<div class="event-dots-container" title="${evName}"><div class="event-dot"></div></div>`;
             
             if (!eventsMap.has(evName)) {
                 eventsMap.set(evName, {
@@ -187,6 +205,27 @@ function renderMonth(monthIndex) {
                     e.end = day.nepali_date;
                 }
             }
+        }
+
+        // Add birthday(s) to the footer event list separately
+        if (isBirthday) {
+            birthdayEvents.forEach(bev => {
+                const bKey = `birthday:${bev.name}`;
+                if (!eventsMap.has(bKey)) {
+                    eventsMap.set(bKey, {
+                        name: bev.name,
+                        typeClass: "et-birthday",
+                        type: "birthday",
+                        start: day.nepali_date,
+                        end: day.nepali_date
+                    });
+                } else {
+                    let e = eventsMap.get(bKey);
+                    if (day.nepali_date > e.end) {
+                        e.end = day.nepali_date;
+                    }
+                }
+            });
         }
 
         cell.innerHTML = cellHTML;
